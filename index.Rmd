@@ -1,5 +1,5 @@
 ---
-title: "Welcome to my website!"
+title: "Ryan C Blackburn"
 ---
 
-You're up and running!
+Aspiring ecologist focusing on remote sensing and modeling of restored ecosystems. 
