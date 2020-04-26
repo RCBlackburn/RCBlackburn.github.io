@@ -1,5 +1,15 @@
 ---
 title: "Ryan C Blackburn"
+output:
+  html_document:
+    includes:
+      in_header: cover.html
 ---
 
+```{js, echo = FALSE}
+document.title = "Ryan C Blackburn"
+```
+
 Aspiring ecologist focusing on remote sensing and modeling of restored ecosystems. 
+
+[Read more about me..](about.html)
