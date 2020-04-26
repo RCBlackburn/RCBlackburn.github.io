@@ -1,5 +1,5 @@
 ---
-title: "Ryan C Blackburn"
+title: "Ryan C. Blackburn"
 output:
   html_document:
     includes:
