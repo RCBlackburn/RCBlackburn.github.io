@@ -527,7 +527,7 @@ const photoHTML = (src,cap)=> src
   : `<figure class="photo"><div class="frame">Photo coming soon<br>${esc(cap)}</div></figure>`;
 
 /* ---------- PUBLICATIONS ---------- */
-const FILTERS=[["all","All"],["grass","Grasslands"],["forest","Forests"],["first","First author"],["q1","Disturbance & communities"],["q2","Model transferability"],["methods","Remote sensing methods"],["mentee","With mentees"],["synth","Synthesis"]];
+const FILTERS=[["all","All"],["grass","Grasslands"],["forest","Forests"],["first","First author"],["q1","Disturbance & communities"],["q2","Model transferability"]];
 let pubFilter="all";
 $("#pubFilters").innerHTML=FILTERS.map(([k,l])=>`<button type="button" data-f="${k}" aria-pressed="${k==="all"}">${l}</button>`).join("");
 $("#pubFilters").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;pubFilter=b.dataset.f;
