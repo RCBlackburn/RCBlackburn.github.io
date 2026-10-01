@@ -1,378 +1,583 @@
-<!DOCTYPE html>
-
-<html xmlns="http://www.w3.org/1999/xhtml">
-
+<!doctype html>
+<html lang="en">
 <head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Ryan C. Blackburn Lab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..125,400..800&family=Spectral:ital,wght@0,400;0,500;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: sticky name/nav bar; each "page" is a section toggled by hash. Hero = Ryan's FARO Orbis mobile lidar animation on white. Research = study sites by place, tagged by question. */
+:root{
+  /* palette: user's earthy "mood" palette (mustard, rust, olive, teal, cream, brown) */
+  --paper:#FFFFFF; --panel:#F4ECDA; --card:#FCF9F2; --ink:#2F2317; --muted:#705B3F; --line:#E4D8BE;
+  --q1:#9D4D28; --q2:#2F7A74; --q1-soft:#F2DCC8; --q2-soft:#D3E6E1; --gold:#C18735; --olive:#70702C;
+  --f-display:"Archivo","Helvetica Neue",Arial,sans-serif;
+  --f-body:"Spectral",Georgia,"Times New Roman",serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+  --maxw:1080px;
+}
+/* single light theme on white, so the lidar scan blends into the page */
+:root{color-scheme:light}
 
-<meta charset="utf-8" />
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<meta name="generator" content="pandoc" />
-<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{background:var(--paper);color:var(--ink);font-family:var(--f-body);font-size:18px;line-height:1.6;margin:0}
+a{color:var(--q1);text-underline-offset:3px}
+a:focus-visible,button:focus-visible,input:focus-visible{outline:2px solid var(--q1);outline-offset:2px}
+h1,h2,h3{font-family:var(--f-display);line-height:1.12;text-wrap:balance;margin:0;letter-spacing:-.01em}
+h2{font-size:clamp(28px,4vw,40px);font-weight:750;font-stretch:88%}
+h3{font-size:21px;font-weight:650;font-stretch:95%}
+p{margin:0}
+.wrap{max-width:var(--maxw);margin:0 auto;padding-inline:20px}
+.eyebrow{font-family:var(--f-mono);font-size:12.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.mono{font-family:var(--f-mono);font-size:13.5px}
+.prose{max-width:66ch;display:grid;gap:16px}
 
+/* header */
+header{position:sticky;top:env(safe-area-inset-top,0px);z-index:10;background:color-mix(in srgb,var(--paper) 90%,transparent);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.bar{display:flex;align-items:center;justify-content:space-between;gap:12px 24px;flex-wrap:wrap;padding-block:12px}
+.brand{font-family:var(--f-display);font-weight:750;font-stretch:85%;font-size:20px;color:var(--ink);text-decoration:none;letter-spacing:-.01em}
+.brand span{color:var(--muted);font-weight:450;font-stretch:100%;font-size:14px;margin-left:8px}
+nav{display:flex;gap:4px;flex-wrap:wrap}
+nav a{font-family:var(--f-display);font-size:15px;font-weight:550;color:var(--muted);text-decoration:none;padding:6px 12px;border-radius:999px}
+nav a:hover{color:var(--ink);background:var(--panel)}
+nav a[aria-current="page"]{color:var(--paper);background:var(--ink)}
 
+main{padding-block:0 72px}
+section.page{display:grid;gap:56px}
 
+/* hero */
+.hero{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:40px;align-items:end;padding-block:56px 8px}
+.hero h1{font-size:clamp(40px,6.2vw,74px);font-weight:800;font-stretch:78%;letter-spacing:-.025em}
+.hero .lede{font-size:21px;color:var(--ink);margin-top:20px;max-width:34ch}
+.hero .who{margin-top:20px;color:var(--muted);font-size:16px}
+.transect{position:relative}
+.transect canvas{display:block;width:100%;height:auto;aspect-ratio:16/10}
+.transect .cap{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;margin-top:8px;color:var(--muted)}
 
-<title>Ryan C. Blackburn</title>
+/* two questions */
+.qs{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.q{border-top:4px solid var(--c);padding-top:18px;display:grid;gap:12px;align-content:start}
+.q .tag{font-family:var(--f-mono);font-size:12.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--c)}
+.q h3{font-size:24px}
+.q p{color:var(--muted)}
+.q1{--c:var(--q1)} .q2{--c:var(--q2)}
+.q a.more{font-family:var(--f-display);font-weight:600;font-size:15px;color:var(--c)}
 
-<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
-<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
-<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
-<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
-<script src="site_libs/navigation-1.1/tabsets.js"></script>
-<link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
-<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
-<link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
-<link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
-<div><img src="cover.JPG" width="100%" align="center"></div>
+.split{display:grid;grid-template-columns:minmax(0,240px) minmax(0,1fr);gap:24px 48px}
+.facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1px;background:var(--line);border:1px solid var(--line)}
+.facts div{background:var(--paper);padding:16px 18px;display:grid;gap:4px}
+.facts b{font-family:var(--f-display);font-weight:650;font-size:17px}
+.facts span{color:var(--muted);font-size:15.5px;line-height:1.45}
 
-<style type="text/css">code{white-space: pre;}</style>
-<style type="text/css">
-  pre:not([class]) {
-    background-color: white;
-  }
+.news{display:grid;gap:0;border-top:1px solid var(--line)}
+.news li{list-style:none;display:grid;grid-template-columns:110px minmax(0,1fr);gap:16px;padding:14px 0;border-bottom:1px solid var(--line)}
+.news ul{margin:0;padding:0}
+.news .mono{color:var(--muted);padding-top:3px}
+
+/* photo slot */
+.photo{margin:0;display:grid;gap:6px;align-self:start;min-width:0}
+.photo .frame{aspect-ratio:4/3;width:100%;max-width:100%;background:repeating-linear-gradient(135deg,var(--panel) 0 10px,transparent 10px 20px),var(--card);border:1px dashed var(--line);display:grid;place-items:center;color:var(--muted);font-family:var(--f-mono);font-size:12px;text-align:center;padding:12px}
+.photo img{aspect-ratio:4/3;width:100%;object-fit:cover;display:block}
+.photo figcaption{font-size:14px;color:var(--muted);font-style:italic}
+
+/* hero scan video (white background, so it sits on a white panel in dark mode too) */
+.scanbox{background:#FFFFFF;border-radius:4px;display:grid;justify-items:center;position:relative}
+.scanbox video,.scanbox img{display:block;width:100%;max-width:520px;height:auto;aspect-ratio:540/504}
+.scanbox .playhint{position:absolute;right:8px;top:8px;font:500 12px var(--f-mono);border:1px solid #D9CDB3;background:#FFFFFFE6;color:#2F2317;padding:4px 10px;border-radius:999px;pointer-events:none;transition:opacity .2s}
+.scanbox.playing .playhint{opacity:0}
+.scanbox button{position:absolute;right:8px;top:8px;font:500 12px var(--f-mono);border:1px solid #D9CDB3;background:#FFFFFFE6;color:#2F2317;padding:4px 10px;border-radius:999px;cursor:pointer}
+.hero{align-items:center}
+/* point cloud */
+.transect canvas{cursor:grab;touch-action:pan-y}
+.transect canvas:active{cursor:grabbing}
+.ramp{display:inline-flex;align-items:center;gap:6px}
+.ramp i{display:inline-block;width:72px;height:8px;border-radius:2px;background:linear-gradient(90deg,#62321C,#875B27,#C18735,#9A9545,#6E8F6D,#46918A,#89ACB1)}
+.credit{font-size:12px;color:var(--muted);margin-top:4px}
+
+/* scales */
+.scales{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:0;border-top:2px solid var(--ink)}
+.scales div{padding:14px 14px 0 0;display:grid;gap:4px;align-content:start;position:relative}
+.scales div+div{padding-left:14px;border-left:1px solid var(--line)}
+.scales b{font-family:var(--f-display);font-weight:650;font-size:16.5px;line-height:1.25}
+.scales .mono{color:var(--gold);font-size:12.5px}
+.scales span{font-size:15px;color:var(--muted);line-height:1.45}
+
+/* timeline */
+.timeline{list-style:none;margin:0;padding:0;display:grid;position:relative}
+.timeline::before{content:"";position:absolute;left:111px;top:8px;bottom:8px;width:2px;background:var(--line)}
+.timeline li{display:grid;grid-template-columns:96px 30px minmax(0,1fr);gap:0 0;padding-block:10px}
+.timeline .yr{font-family:var(--f-mono);font-size:13px;color:var(--muted);padding-top:3px;text-align:right;padding-right:6px}
+.timeline .dot{justify-self:center;width:14px;height:14px;border-radius:50%;margin-top:5px;position:relative;z-index:1;background:var(--c,var(--ink));border:3px solid var(--paper);box-sizing:content-box;margin-left:-3px}
+.timeline li.edu .dot{background:var(--paper);border:3px solid var(--c)}
+.timeline .ev{display:grid;gap:2px;padding-left:10px}
+.timeline .ev b{font-family:var(--f-display);font-weight:650;font-size:17px;line-height:1.3}
+.timeline .ev span{font-size:15.5px;color:var(--muted);line-height:1.45}
+.tl-legend{display:flex;flex-wrap:wrap;gap:6px 18px;color:var(--muted);margin-bottom:12px}
+.tl-legend span{display:inline-flex;align-items:center;gap:6px}
+.tl-legend i{width:10px;height:10px;border-radius:50%;display:inline-block}
+.svc{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px}
+.svc div{display:grid;gap:10px;align-content:start;border-top:1px solid var(--ink);padding-top:12px}
+.svc ul{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.svc li{display:grid;gap:1px;font-size:16px;line-height:1.4}
+.svc li .mono{color:var(--muted);font-size:12.5px}
+
+/* research: two systems */
+.qlist{list-style:none;margin:4px 0 0;padding:0;display:grid;gap:10px;max-width:74ch}
+.qlist li{display:grid;grid-template-columns:250px minmax(0,1fr);gap:12px;align-items:baseline;font-size:17px}
+.system{display:grid;gap:22px;scroll-margin-top:90px}
+.syshead{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:6px 24px;border-top:2px solid var(--ink);padding-top:16px}
+.syshead h2{font-size:clamp(40px,6vw,60px);font-weight:800;font-stretch:80%}
+.syshead p{color:var(--muted)}
+.sysintro{font-size:20px}
+.banner{position:relative;height:320px;border-radius:4px;overflow:hidden;background:var(--panel)}
+.banner img{width:100%;height:100%;object-fit:cover;display:block}
+.banner::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(20,14,8,0) 45%,rgba(20,14,8,.55))}
+.banner h2{position:absolute;left:28px;bottom:18px;z-index:1;margin:0;color:#FFFFFF;font-size:clamp(44px,8vw,96px);font-weight:800;font-stretch:78%;letter-spacing:-.02em;line-height:.95;text-shadow:0 2px 18px rgba(0,0,0,.25)}
+.sites{color:var(--muted);margin-top:-6px}
+#research-grass .thread .thumb{aspect-ratio:3/2}
+#research-forest .thread .thumb{aspect-ratio:1/1}
+.thread .thumb{width:100%;aspect-ratio:16/9;object-fit:cover;border-radius:3px;display:block;margin-bottom:6px;background:var(--panel)}
+.collage{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));height:260px;gap:6px;border-radius:4px;overflow:hidden}
+.collage .t{min-width:0;overflow:hidden;background:var(--panel)}
+.collage .s2{grid-column:span 2}
+.collage img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .6s ease}
+.collage .t:hover img{transform:scale(1.04)}
+.gallery{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));grid-auto-rows:190px;grid-auto-flow:dense;gap:8px}
+.gallery .g{margin:0;position:relative;overflow:hidden;border-radius:3px;background:var(--panel)}
+.gallery .w2{grid-column:span 2}.gallery .w4{grid-column:span 4}.gallery .h2{grid-row:span 2}
+.gallery img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .5s ease}
+.gallery .g:hover img{transform:scale(1.03)}
+.gallery .prod{background:#FFFFFF;border:1px solid var(--line)}
+.gallery .prod img{object-fit:contain;padding:10px 10px 34px}
+.gallery .prod figcaption{color:#2F2317;background:linear-gradient(rgba(255,255,255,0),#FFFFFF 40%)}
+.gallery figcaption{position:absolute;left:0;right:0;bottom:0;padding:22px 10px 8px;font:500 12.5px/1.35 var(--f-mono);color:#FFFFFF;background:linear-gradient(transparent,rgba(20,14,8,.72))}
+
+.threads{display:grid;gap:28px 36px}
+.threads.two{grid-template-columns:repeat(2,minmax(0,1fr))}
+.threads.three{grid-template-columns:repeat(3,minmax(0,1fr))}
+.thread{display:grid;gap:8px;align-content:start}
+.thread p{font-size:16.5px;color:var(--muted)}
+.thread .tags{display:flex;gap:6px;flex-wrap:wrap}
+.system a.more{font-family:var(--f-display);font-weight:600;font-size:16px;justify-self:start}
+
+/* research */
+.pagehead{padding-block:48px 0;display:grid;gap:14px}
+.pagehead p{color:var(--muted);max-width:62ch;font-size:19px}
+.seg{justify-self:start;display:inline-flex;border:1px solid var(--ink);border-radius:999px;padding:3px;gap:3px;flex-wrap:wrap}
+.seg button{font:600 15px var(--f-display);border:0;background:transparent;color:var(--ink);padding:7px 16px;border-radius:999px;cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--paper)}
+.qblock{display:grid;gap:24px}
+.qblock>header{position:static;background:none;backdrop-filter:none;border:0;display:grid;gap:10px;border-top:4px solid var(--c);padding-top:18px}
+.qblock>header h2{font-size:clamp(24px,3.2vw,32px);max-width:32ch}
+.qblock>header p{color:var(--muted);max-width:66ch}
+.projects{display:grid;gap:18px}
+.proj{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,300px);gap:20px 28px;padding:22px;background:var(--card);border:1px solid var(--line)}
+.proj .meta{display:flex;flex-wrap:wrap;gap:6px 14px;color:var(--muted)}
+.proj .body{display:grid;gap:10px;align-content:start;min-width:0}
+.proj .body p{font-size:17px}
+.proj .find{border-left:3px solid var(--c);padding-left:12px;font-size:16.5px}
+.proj .refs{font-size:14.5px;color:var(--muted)}
+.chip{display:inline-flex;align-items:center;gap:6px;font-family:var(--f-mono);font-size:12px;letter-spacing:.03em;padding:3px 9px;border-radius:999px;background:var(--soft);color:var(--c);white-space:nowrap}
+.chip.q1{--c:var(--q1);--soft:var(--q1-soft)} .chip.q2{--c:var(--q2);--soft:var(--q2-soft)}
+.chip.sys{background:var(--panel);color:var(--muted);text-decoration:none}
+.chip.site{background:var(--panel);color:var(--muted);cursor:pointer;border:0}
+.qpick{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.qpick button{all:unset;cursor:pointer;display:grid;gap:8px;padding:16px 18px;border:1px solid var(--line);border-top:4px solid var(--c);background:var(--card)}
+.qpick button:focus-visible{outline:2px solid var(--c);outline-offset:2px}
+.qpick button[aria-pressed="true"]{background:var(--soft);border-color:var(--c)}
+.qpick b{font-family:var(--f-display);font-weight:650;font-size:18px;line-height:1.3;color:var(--ink)}
+.qpick .tag{font-family:var(--f-mono);font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--c)}
+.qpick .n{font-size:14.5px;color:var(--muted)}
+.next{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}
+.next div{display:grid;gap:8px;align-content:start;padding-top:14px;border-top:1px solid var(--ink)}
+.next p{font-size:16.5px;color:var(--muted)}
+
+/* map */
+.mapbox{background:var(--card);border:1px solid var(--line);padding:16px 16px 10px;overflow-x:auto}
+.mapbox svg{display:block;width:100%;min-width:560px;height:auto}
+.mapbox .note{color:var(--muted);margin-top:6px}
+.site-list{display:flex;flex-wrap:wrap;gap:8px}
+.site-list button{font:600 14.5px var(--f-display);border:1px solid var(--line);background:var(--paper);color:var(--ink);padding:7px 14px;border-radius:999px;cursor:pointer}
+.site-list button[aria-pressed="true"]{border-color:var(--ink);background:var(--ink);color:var(--paper)}
+.sitehead{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px 20px;align-items:end;border-top:2px solid var(--ink);padding-top:14px}
+.sitehead p{grid-column:1/-1;color:var(--muted);max-width:70ch}
+
+/* publications */
+.pubtools{display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center}
+.pubtools input[type=search]{font:16px var(--f-body);padding:8px 14px;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:999px;min-width:0;flex:1 1 220px;max-width:340px}
+.filters{display:flex;flex-wrap:wrap;gap:6px}
+.filters button{font:550 14px var(--f-display);border:1px solid var(--line);background:transparent;color:var(--ink);padding:6px 12px;border-radius:999px;cursor:pointer}
+.filters button[aria-pressed="true"]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.pubgroup{display:grid;grid-template-columns:120px minmax(0,1fr);gap:8px 28px;padding-top:18px;border-top:1px solid var(--line)}
+.pubgroup h3{font-size:30px;font-weight:800;font-stretch:80%;color:var(--muted)}
+.pubgroup ol{list-style:none;margin:0;padding:0;display:grid;gap:18px}
+.pub{display:grid;gap:4px}
+.pub .t{font-family:var(--f-display);font-weight:600;font-size:18px;line-height:1.3;color:var(--ink);text-decoration:none}
+.pub a.t:hover{color:var(--q1);text-decoration:underline}
+.pub .a{font-size:15.5px;color:var(--muted)}
+.pub .a strong{color:var(--ink);font-weight:500}
+.pub .j{font-size:15.5px}
+.pub .tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:2px}
+.count{color:var(--muted)}
+
+/* mentees */
+.mgroup{display:grid;gap:18px}
+.mgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:18px}
+.mentee{display:grid;grid-template-columns:84px minmax(0,1fr);gap:16px;padding:18px;background:var(--card);border:1px solid var(--line)}
+.avatar{width:84px;height:84px;border-radius:50%;background:var(--panel);display:grid;place-items:center;font:750 26px var(--f-display);font-stretch:85%;color:var(--muted);overflow:hidden}
+.avatar img{width:100%;height:100%;object-fit:cover}
+.mentee .info{display:grid;gap:6px;align-content:start;min-width:0}
+.mentee h3{font-size:19px}
+.mentee .role{color:var(--muted)}
+.mentee p{font-size:16px}
+.mentee .out{font-size:14.5px;color:var(--muted)}
+.status{font-family:var(--f-mono);font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;padding:2px 8px;border-radius:999px;justify-self:start}
+.status.now{background:var(--q1-soft);color:var(--q1)}
+.status.past{background:var(--panel);color:var(--muted)}
+.approach{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}
+.approach div{display:grid;gap:6px;padding-top:12px;border-top:1px solid var(--ink)}
+.approach p{font-size:16.5px;color:var(--muted)}
+
+footer{border-top:1px solid var(--line);padding-block:28px;color:var(--muted);font-size:15px}
+footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px}
+.copy{font:500 13px var(--f-mono);border:1px solid var(--line);background:transparent;color:var(--ink);padding:3px 10px;border-radius:999px;cursor:pointer;margin-left:8px}
+
+@media (max-width:820px){
+  .hero,.qs,.split,.proj,.next,.approach,.svc,.qpick{grid-template-columns:1fr}
+  .scales{grid-template-columns:1fr 1fr}
+  .threads.two,.threads.three{grid-template-columns:1fr}
+  .qlist li{grid-template-columns:1fr;gap:4px}
+  .gallery{grid-template-columns:repeat(2,minmax(0,1fr));grid-auto-rows:150px}
+  .banner{height:190px}
+  .banner h2{left:16px;bottom:12px}
+  .collage{grid-template-columns:repeat(3,minmax(0,1fr));height:150px;gap:4px}
+  .collage .s2{grid-column:span 1}
+  .collage .t:nth-child(n+4){display:none}
+  .gallery .w4{grid-column:span 2}
+  .gallery .w4.h2{grid-row:span 1}
+  .scales div+div{padding-left:0;border-left:0}
+  .scales div{padding:12px 12px 12px 0;border-bottom:1px solid var(--line)}
+  .timeline::before{left:77px}
+  .timeline li{grid-template-columns:62px 30px minmax(0,1fr)}
+  .hero{padding-block:32px 0}
+  .pubgroup{grid-template-columns:1fr}
+  .news li{grid-template-columns:1fr;gap:2px}
+  .proj .photo{order:-1}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 </style>
-<script type="text/javascript">
-if (window.hljs) {
-  hljs.configure({languages: []});
-  hljs.initHighlightingOnLoad();
-  if (document.readyState && document.readyState === "complete") {
-    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
-  }
-}
-</script>
-
-
-
-<style type="text/css">
-h1 {
-  font-size: 34px;
-}
-h1.title {
-  font-size: 38px;
-}
-h2 {
-  font-size: 30px;
-}
-h3 {
-  font-size: 24px;
-}
-h4 {
-  font-size: 18px;
-}
-h5 {
-  font-size: 16px;
-}
-h6 {
-  font-size: 12px;
-}
-.table th:not([align]) {
-  text-align: left;
-}
-</style>
-
-
-
-
-<style type = "text/css">
-.main-container {
-  max-width: 940px;
-  margin-left: auto;
-  margin-right: auto;
-}
-code {
-  color: inherit;
-  background-color: rgba(0, 0, 0, 0.04);
-}
-img {
-  max-width:100%;
-}
-.tabbed-pane {
-  padding-top: 12px;
-}
-.html-widget {
-  margin-bottom: 20px;
-}
-button.code-folding-btn:focus {
-  outline: none;
-}
-summary {
-  display: list-item;
-}
-</style>
-
-
-<style type="text/css">
-/* padding for bootstrap navbar */
-body {
-  padding-top: 51px;
-  padding-bottom: 40px;
-}
-/* offset scroll position for anchor links (for fixed navbar)  */
-.section h1 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
-.section h2 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
-.section h3 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
-.section h4 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
-.section h5 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
-.section h6 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
-.dropdown-submenu {
-  position: relative;
-}
-.dropdown-submenu>.dropdown-menu {
-  top: 0;
-  left: 100%;
-  margin-top: -6px;
-  margin-left: -1px;
-  border-radius: 0 6px 6px 6px;
-}
-.dropdown-submenu:hover>.dropdown-menu {
-  display: block;
-}
-.dropdown-submenu>a:after {
-  display: block;
-  content: " ";
-  float: right;
-  width: 0;
-  height: 0;
-  border-color: transparent;
-  border-style: solid;
-  border-width: 5px 0 5px 5px;
-  border-left-color: #cccccc;
-  margin-top: 5px;
-  margin-right: -10px;
-}
-.dropdown-submenu:hover>a:after {
-  border-left-color: #ffffff;
-}
-.dropdown-submenu.pull-left {
-  float: none;
-}
-.dropdown-submenu.pull-left>.dropdown-menu {
-  left: -100%;
-  margin-left: 10px;
-  border-radius: 6px 0 6px 6px;
-}
-</style>
-
-<script>
-// manage active state of menu based on current page
-$(document).ready(function () {
-  // active menu anchor
-  href = window.location.pathname
-  href = href.substr(href.lastIndexOf('/') + 1)
-  if (href === "")
-    href = "index.html";
-  var menuAnchor = $('a[href="' + href + '"]');
-
-  // mark it active
-  menuAnchor.parent().addClass('active');
-
-  // if it's got a parent navbar menu mark it active as well
-  menuAnchor.closest('li.dropdown').addClass('active');
-});
-</script>
-
-<!-- tabsets -->
-
-<style type="text/css">
-.tabset-dropdown > .nav-tabs {
-  display: inline-table;
-  max-height: 500px;
-  min-height: 44px;
-  overflow-y: auto;
-  background: white;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-}
-
-.tabset-dropdown > .nav-tabs > li.active:before {
-  content: "";
-  font-family: 'Glyphicons Halflings';
-  display: inline-block;
-  padding: 10px;
-  border-right: 1px solid #ddd;
-}
-
-.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
-  content: "&#xe258;";
-  border: none;
-}
-
-.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
-  content: "";
-  font-family: 'Glyphicons Halflings';
-  display: inline-block;
-  padding: 10px;
-  border-right: 1px solid #ddd;
-}
-
-.tabset-dropdown > .nav-tabs > li.active {
-  display: block;
-}
-
-.tabset-dropdown > .nav-tabs > li > a,
-.tabset-dropdown > .nav-tabs > li > a:focus,
-.tabset-dropdown > .nav-tabs > li > a:hover {
-  border: none;
-  display: inline-block;
-  border-radius: 4px;
-}
-
-.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
-  display: block;
-  float: none;
-}
-
-.tabset-dropdown > .nav-tabs > li {
-  display: none;
-}
-</style>
-
-<!-- code folding -->
-
-
-
-
 </head>
-
 <body>
 
 
-<div class="container-fluid main-container">
+<header>
+  <div class="wrap bar">
+    <a class="brand" href="#home">Ryan C. Blackburn<span>Landscape ecology</span></a>
+    <nav aria-label="Site">
+      <a href="#home" data-page="home">Home</a>
+      <a href="#research" data-page="research">Research</a>
+      <a href="#publications" data-page="publications">Publications</a>
+      <a href="#mentees" data-page="mentees">Mentees</a>
+    </nav>
+  </div>
+</header>
 
+<main class="wrap">
 
-
-
-<div class="navbar navbar-inverse  navbar-fixed-top" role="navigation">
-  <div class="container">
-    <div class="navbar-header">
-      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-      </button>
-      <a class="navbar-brand" href="index.html">Ryan C. Blackburn</a>
+<!-- ============ HOME ============ -->
+<section class="page" id="page-home" data-page="home">
+  <div class="hero">
+    <div>
+      <p class="eyebrow">Quantitative landscape ecologist</p>
+      <h1>How vegetation structure shapes ecological communities</h1>
+      <p class="lede">I study how disturbance and land use reshape the three-dimensional arrangement of plants, and what that means for the animals and plants living there.</p>
+      <p class="who">Postdoctoral Researcher, Cornell University · Research Affiliate, Smithsonian Conservation Biology Institute</p>
     </div>
-    <div id="navbar" class="navbar-collapse collapse">
-      <ul class="nav navbar-nav">
-        <li>
-  <a href="index.html">
-    <span class="fa fa-home"></span>
-     
-    Home
-  </a>
-</li>
-<li>
-  <a href="about.html">
-    <span class="fa fa-user"></span>
-     
-    About
-  </a>
-</li>
-<li>
-  <a href="cv.html">
-    <span class="fa fa-file-pdf-o"></span>
-     
-    CV
-  </a>
-</li>
-      </ul>
-      <ul class="nav navbar-nav navbar-right">
-        <li>
-  <a href="mailto:ryan.blackburn@nau.edu">
-    <span class="fa fa-envelope-o"></span>
-     
-    Contact me
-  </a>
-</li>
-<li>
-  <a href="https://github.com/RCBlackburn">
-    <span class="fa fa-github"></span>
-     
-    GitHub
-  </a>
-</li>
-      </ul>
-    </div><!--/.nav-collapse -->
-  </div><!--/.container -->
-</div><!--/.navbar -->
+    <figure class="transect" style="margin:0">
+      <div class="scanbox">
+        <video id="scan" src="photos/orbis_scan.mp4" poster="photos/orbis_scan_poster.jpg" muted loop playsinline preload="auto" class="hoverplay" aria-label="Rotating mobile lidar point cloud of a forest plot, about 20 m across and 30 m tall"></video>
+        <span class="playhint" aria-hidden="true">Hover to play</span>
+      </div>
+      <figcaption class="cap mono"><span>Mobile lidar (FARO Orbis) · forest plot, axes in meters</span></figcaption>
+    </figure>
+  </div>
 
-<div class="fluid-row" id="header">
+  <div class="split">
+    <p class="eyebrow">About my work</p>
+    <div class="prose">
+      <p>Fire regimes, grazing, and land use are shifting, while invasive species and climate extremes add new pressures. Many of these changes reach ecological communities by altering vegetation structure, the three-dimensional arrangement of plant biomass that sets the habitat heterogeneity communities assemble around.</p>
+      <p>I pair field surveys of plant and animal communities with measurements of structure from sub-meter plots to whole landscapes, using drones, airborne, mobile and handheld lidar, and satellites. I have worked in tallgrass prairie in Illinois, frequent-fire conifer forests of the Southwest, the central Mongolian steppe, and forests around apple orchards in New York and northern India.</p>
+    </div>
+  </div>
 
+  <div class="qs">
+    <article class="q q1">
+      <span class="tag">Question 1</span>
+      <h3>How do disturbance, land use, and vegetation structure interact to shape ecological communities?</h3>
+      <p>From bison and fire in restored prairie to subcanopy openness in forests, I test how disturbance creates the structural heterogeneity that communities respond to.</p>
+      <a class="more" href="#research">See the research →</a>
+    </article>
+    <article class="q q2">
+      <span class="tag">Question 2</span>
+      <h3>Can the places where predictive models break down reveal where communities reorganize?</h3>
+      <p>Models built today assume relationships will hold tomorrow. I test how well they transfer to new places and climate extremes, and treat their failures as signals of ecological change.</p>
+      <a class="more" href="#research">See the research →</a>
+    </article>
+  </div>
 
+  <div class="split">
+    <p class="eyebrow">Measuring across scales</p>
+    <div class="scales" aria-label="Sensors from fine to coarse scale">
+      <div><span class="mono">cm · plot</span><b>Field observations &amp; handheld lidar</b><span>Plant community composition and structure</span></div>
+      <div><span class="mono">m · plot–stand</span><b>Mobile lidar</b><span>Multilayered canopy structure and current forest conditions</span></div>
+      <div><span class="mono">m · site</span><b>Drones</b><span>Cover, height, and plant functional types</span></div>
+      <div><span class="mono">km · landscape</span><b>Airborne lidar</b><span>Canopy and voxel metrics across forests</span></div>
+      <div><span class="mono">km+ · region</span><b>Satellites</b><span>Connecting finer-scale observations across regions, from Sentinel-2 to NISAR</span></div>
+    </div>
+  </div>
 
-<h1 class="title toc-ignore">Ryan C. Blackburn</h1>
+  <div class="split">
+    <p class="eyebrow">Recent</p>
+    <div class="news"><ul>
+      <li><span class="mono">Jul 2026</span><span>Talk at ESA 2026, Salt Lake City: <em>Subcanopy structure drives pollinator communities in New York forests.</em></span></li>
+      <li><span class="mono">2026</span><span>New paper in <em>Science of Remote Sensing</em>: a two-step drone-to-satellite approach for mapping grassland structure in Mongolia.</span></li>
+      <li><span class="mono">2026</span><span>USDA McIntire-Stennis award with G. Allington and J. Dearing to study small woodlot management in New York (2027–2029).</span></li>
+      <li><span class="mono">2025</span><span>New paper in <em>Landscape Ecology</em>: drone models of vegetation do not transfer to extreme drought and wet conditions.</span></li>
+    </ul></div>
+  </div>
 
-</div>
+  <div class="split">
+    <p class="eyebrow">Path</p>
+    <div>
+      <div class="tl-legend mono"><span><i style="background:var(--q1)"></i>Research position</span><span><i style="border:2px solid var(--q2)"></i>Degree</span><span><i style="background:var(--gold)"></i>Teaching</span></div>
+      <ol class="timeline">
+        <li style="--c:var(--q1)"><span class="yr">2025–</span><span class="dot"></span><div class="ev"><b>Postdoctoral Researcher, Cornell University</b><span>Allington Lab. NSF DISES project on forest structure and pollinators in New York and northern India.</span></div></li>
+        <li style="--c:var(--q1)"><span class="yr">2025–</span><span class="dot"></span><div class="ev"><b>Research Affiliate, Smithsonian Conservation Biology Institute</b><span>Continuing Mongolia grassland modeling and mentoring interns.</span></div></li>
+        <li style="--c:var(--q1)"><span class="yr">2022–25</span><span class="dot"></span><div class="ev"><b>Postdoctoral Researcher, Smithsonian</b><span>NASA Land-Cover/Land-Use Change. Drone-to-satellite scaling in Mongolia and model transfer in Arizona.</span></div></li>
+        <li class="edu" style="--c:var(--q2)"><span class="yr">2018–22</span><span class="dot"></span><div class="ev"><b>Ph.D. Forestry, Northern Arizona University</b><span>“Into the canopy: Advancing forest resource characterizations with lidar.” Advisor: Andrew Sánchez Meador. Certificate in applied statistics.</span></div></li>
+        <li style="--c:var(--q1)"><span class="yr">2020–22</span><span class="dot"></span><div class="ev"><b>GIS Specialist, National Forest Foundation · Research Crew Leader, NAU</b><span>Sampling designs for forest treatments; trained field crews in lidar and forest measurement.</span></div></li>
+        <li style="--c:var(--gold)"><span class="yr">2018</span><span class="dot"></span><div class="ev"><b>Adjunct Instructor, Kishwaukee College</b><span>Designed and taught Human Biology.</span></div></li>
+        <li class="edu" style="--c:var(--q2)"><span class="yr">2015–18</span><span class="dot"></span><div class="ev"><b>M.S. Biology, Northern Illinois University</b><span>Diet and vegetation impacts of reintroduced bison at Nachusa Grasslands. Advisor: Holly Jones.</span></div></li>
+        <li style="--c:var(--q1)"><span class="yr">2014–15</span><span class="dot"></span><div class="ev"><b>Restoration Technician, Nachusa Grasslands</b><span>The Nature Conservancy. My first ecology job.</span></div></li>
+        <li class="edu" style="--c:var(--q2)"><span class="yr">2012–15</span><span class="dot"></span><div class="ev"><b>B.S. Environmental Studies, Northern Illinois University</b><span>Biodiversity and environmental restoration; GIS certificate.</span></div></li>
+        <li class="edu" style="--c:var(--q2)"><span class="yr">2012</span><span class="dot"></span><div class="ev"><b>A.S. General Science, Waubonsee Community College</b><span>Where it started.</span></div></li>
+      </ol>
+    </div>
+  </div>
 
+  <div class="split">
+    <p class="eyebrow">Service &amp; support</p>
+    <div class="svc">
+      <div><h3>Service</h3><ul>
+        <li><span class="mono">2023–present</span>Associate Editor, <em>Ecological Solutions and Evidence</em></li>
+        <li><span class="mono">2025</span>NASA grant review panelist</li>
+        <li><span class="mono">2024–present</span>Ph.D. committee, Keegan Line, Northern Arizona University</li>
+        <li><span class="mono">2018–2021</span>Vice President, then President, NAU Forestry Graduate Student Association</li>
+      </ul></div>
+      <div><h3>Funding</h3><ul>
+        <li><span class="mono">2024–2027</span>NSF Dynamics of Integrated Socio-Environmental Systems (co-author)</li>
+        <li><span class="mono">2027–2029</span>USDA McIntire-Stennis: small woodlot management in New York</li>
+        <li><span class="mono">2016</span>Friends of Nachusa Scientific Research Grant</li>
+      </ul></div>
+      <div><h3>Awards</h3><ul>
+        <li><span class="mono">2020, 2021</span>ARCS Foundation Fellowship</li>
+        <li><span class="mono">2020, 2021</span>C.R. Krimminger Scholarship for Forestry</li>
+        <li><span class="mono">2017</span>ESA Ecological Restoration poster contest, 2nd place</li>
+      </ul></div>
+    </div>
+  </div>
+</section>
 
-<script type="text/javascript">
-document.title = "Ryan C Blackburn"
-</script>
-<p>Aspiring ecologist focusing on remote sensing and modeling of restored ecosystems.</p>
+<!-- ============ RESEARCH ============ -->
+<section class="page" id="page-research" data-page="research" hidden>
+  <div class="pagehead">
+    <p class="eyebrow">Research</p>
+    <h2>Grasslands and forests</h2>
+    <p>I work in two kinds of systems, and in both I ask the same two questions. The <a href="#publications">publications</a> have the full details.</p>
+    <ol class="qlist">
+      <li><span class="chip q1">Q1 · Disturbance &amp; communities</span><span>How do disturbance, land use, and vegetation structure interact to shape ecological communities?</span></li>
+      <li><span class="chip q2">Q2 · Model transferability</span><span>Can the places where predictive models break down reveal where and how communities reorganize under no-analog conditions?</span></li>
+    </ol>
+  </div>
 
+  <section class="system" id="research-grass">
+    <div class="banner"><img src="photos/mongolia_panorama.jpg" alt="Evening on the central Mongolian steppe" style="object-position:center 55%"><h2>Grasslands</h2></div>
+    <p class="sites mono">Nachusa Grasslands, IL · northern Arizona · central Mongolia · grassland sites across the U.S.</p>
+    <p class="sysintro">Grazing, fire, drought, and human land-use decisions continually reshape grassland communities, which makes grasslands a place to watch community assembly as it happens: which species disturbance filters in or out, how restoration history leaves a lasting imprint on a community, and whether the models built to track these changes still hold when conditions move beyond what we have observed.</p>
+    <div class="threads two"><div class="thread"><img class="thumb" src="photos/nachusa_bison.jpg" alt="Bison grazing at Nachusa Grasslands" loading="lazy" style="object-position:center 60%"><h3>Bison and fire in restored prairie</h3><p>At Nachusa Grasslands, reintroduced bison shift their diets through the season, and grazed restorations become more variable in plant composition. Management shaped prairie animal communities more strongly than plant diversity did.</p><span class="tags"><span class="chip q1">Q1 · Disturbance &amp; communities</span></span></div><div class="thread"><img class="thumb" src="photos/iphone_scan_crop.jpg" alt="Scanning a plot with iPhone lidar" loading="lazy" style="object-position:center"><h3>Handheld and iPhone lidar for herbaceous biomass</h3><p>Low-cost handheld lidar, including the sensor in an iPhone, can measure herbaceous biomass accurately. We are modeling biomass across grasslands in the U.S. and Mongolia and tracking how uncertainty carries from plot to landscape.</p><span class="tags"><span class="chip q2">Q2 · Model transferability</span></span></div><div class="thread"><img class="thumb" src="photos/grass_ndvi_drone.jpg" alt="Drone imagery with an NDVI overlay" loading="lazy" style="object-position:center 75%"><h3>When models meet drought</h3><p>Drone models of plant communities built under normal rainfall became biased on drought plots in northern Arizona, where communities had shifted from grasses to forbs. The model failure tracked the community change.</p><span class="tags"><span class="chip q2">Q2 · Model transferability</span></span></div><div class="thread"><img class="thumb" src="photos/mongolia_drone.jpg" alt="Drone survey over the steppe" loading="lazy" style="object-position:center 35%"><h3>From plots to satellites in Mongolia</h3><p>A two-step approach links field plots to drones and drones to satellites across the central Mongolian steppe, where climate and herding shape vegetation. Mapping where each model applies matters as much as its accuracy.</p><span class="tags"><span class="chip q2">Q2 · Model transferability</span><span class="chip q1">Q1 · Disturbance &amp; communities</span></span></div></div>
+    <a class="more" href="#pubs-grass">Grassland papers →</a>
+  </section>
 
+  <section class="system" id="research-forest">
+    <div class="banner"><img src="photos/ny_beech_autumn.jpg" alt="Beech forest in autumn, New York" style="object-position:center 45%"><h2>Forests</h2></div>
+    <p class="sites mono">Arizona &amp; New Mexico · New York · northern India</p>
+    <p class="sysintro">Fire exclusion, logging, degradation, and invasive species change how vegetation fills the space beneath the canopy. The habitat heterogeneity hypothesis predicts that structurally complex forests support more diverse communities, and disturbance is what builds or erases that complexity. I measure how forest structure differs across disturbance and management histories and ask how those differences shape the communities and ecological processes that depend on them.</p>
+    <div class="threads three"><div class="thread"><img class="thumb" src="photos/sw_mixed_conifer.jpg" alt="Mixed-conifer forest in the Southwest" loading="lazy" style="object-position:center 60%"><h3>Subcanopy structure and spotted owls</h3><p>A century of fire exclusion and logging has made Southwest forests dense and uniform. With the U.S. Fish and Wildlife Service, I found that subcanopy conditions, which canopy cover misses, may be key to where Mexican spotted owls nest.</p><span class="tags"><span class="chip q1">Q1 · Disturbance &amp; communities</span></span></div><div class="thread"><img class="thumb" src="photos/segmented_trees.jpg" alt="Trees segmented from a lidar point cloud" loading="lazy" style="object-position:center bottom"><h3>Better lidar measures of structure</h3><p>Voxel-based metrics describe how vegetation fills the canopy and improve airborne estimates of forest structure across Arizona and New Mexico. Related work compares airborne, terrestrial, and mobile lidar.</p><span class="tags"><span class="chip q2">Q2 · Model transferability</span></span></div><div class="thread"><img class="thumb" src="photos/ny_trap_square.jpg" alt="Pollinator traps in a New York forest plot" loading="lazy" style="object-position:center"><h3>Forest structure and pollinators</h3><p>Around apple orchards in New York and northern India, we pair pollinator surveys with mobile lidar. Open, heterogeneous subcanopies support more pollinators, a pattern at odds with the filling-in of many eastern forests.</p><span class="tags"><span class="chip q1">Q1 · Disturbance &amp; communities</span><span class="chip q2">Q2 · Model transferability</span></span></div></div>
+    <a class="more" href="#pubs-forest">Forest papers →</a>
+  </section>
 
+  <div class="qblock" style="--c:var(--ink)">
+    <header><p class="eyebrow">Next directions</p><h2>Where the work is going</h2></header>
+    <div class="next">
+      <div><h3>Scaling forest structure and pollinators</h3><p>Mapping changing forest structure across New York and northern India with mobile lidar and spaceborne sensors such as NISAR.</p></div>
+      <div><h3>Grazing, fire, and restored grasslands</h3><p>More than a decade after bison returned to Nachusa, mapping biomass and structure across restorations and pairing those maps with pollinator surveys.</p></div>
+      <div><h3>How general are structure–community links?</h3><p>Common protocols across grassland and forest sites to learn which effects of openness and heterogeneity generalize.</p></div>
+    </div>
+  </div>
+</section>
 
-</div>
+<!-- ============ PUBLICATIONS ============ -->
+<section class="page" id="page-publications" data-page="publications" hidden>
+  <div class="pagehead">
+    <p class="eyebrow">Publications</p>
+    <h2>Papers, chapters, and manuscripts</h2>
+    <p>Titles link to a Google Scholar search for the paper.</p>
+  </div>
+  <div class="pubtools">
+    <label for="pubSearch" class="eyebrow" style="position:absolute;left:-9999px">Search publications</label>
+    <input type="search" id="pubSearch" placeholder="Search titles, journals, authors">
+    <div class="filters" id="pubFilters" role="group" aria-label="Filter publications"></div>
+    <span class="count mono" id="pubCount"></span>
+  </div>
+  <div id="pubList" style="display:grid;gap:28px"></div>
+</section>
+
+<!-- ============ MENTEES ============ -->
+<section class="page" id="page-mentees" data-page="mentees" hidden>
+  <div class="pagehead">
+    <p class="eyebrow">Mentees</p>
+    <h2>The people I've worked with</h2>
+    <p>I started in ecology as a restoration technician, and I mentor the way I learned: start with defined, hands-on work, then take on more of the research process as skills grow.</p>
+  </div>
+  <div class="approach">
+    <div><h3>Start hands-on</h3><p>New mentees begin with real field and analysis tasks that have clear goals.</p></div>
+    <div><h3>Build ownership</h3><p>Each person takes on a defined question and carries it from methods to results.</p></div>
+    <div><h3>Share the work</h3><p>Mentees present and publish what they find, and several have gone on to Ph.D. programs and careers in spatial ecology.</p></div>
+  </div>
+  <div id="menteeList" style="display:grid;gap:48px"></div>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>Ryan C. Blackburn · Fernow Hall, Cornell University, Ithaca, NY</span>
+    <span>rcblackburn@cornell.edu<button class="copy" type="button" id="copyEmail">Copy</button></span>
+  </div>
+</footer>
 
 <script>
+/* ---------- DATA ----------
+   To add a photo: set photo:"photos/filename.jpg" on a project or mentee. */
+const ME = "Blackburn, R. C.";
+const PUBS = [
+  {y:"In review", a:"Allington, G., Ulambayar, T., Dearing, J., Blackburn, R. C., and Huang, Q.", t:"Fencing, mobility, and the future of Mongolia's pastoral commons", j:"Environmental Research Letters", tags:["grass","q1"], site:"mongolia"},
+  {y:"In review", a:"Bayarkhangai, A., Blackburn, R. C., Allington, G., Ulambayar, T., and Huang, Q.", t:"Evaluating the efficacies between categorical and continuous UAV models for scaling of satellite-based vegetation cover estimates in Mongolian grasslands", j:"Remote Sensing of Environment", tags:["grass","q2","mentee"], site:"mongolia"},
+  {y:"In review", a:"Martínez-Fonseca, J.G., Blackburn, R. C., Winterbottom, C., DeJong, M., Wan, H.Y., and Chambers, C.L.", t:"Illuminating knowledge gaps: Methodological and biogeographic biases in ALAN studies of bats", j:"Journal of Mammalogy", tags:["synth"]},
+  {y:"In press", a:"Brubaker, R. L., Blackburn, R. C., Allington, G., Bayarkhangai, A., Ulambayar, T., and Huang, Q.", t:"Two-step multiscale approach for estimating vegetation cover in central Mongolia using Planet SkySat and Sentinel-2 imagery", j:"Recent Environmental Change in Central Asia", v:"Chapter 4", tags:["grass","q2","mentee"], site:"mongolia"},
+  {y:"2026", a:"Blackburn, R. C., Allington, G., Bayarkhangai, A., Motzer, N., Ulambayar, T., and Huang, Q.", t:"Moving on up: A two-step scaling approach for grassland vegetation structure", j:"Science of Remote Sensing", v:"13, 100419", tags:["grass","q2","first"], site:"mongolia"},
+  {y:"2026", a:"Juliano, A., Jones, H.P., Baker, K., Blackburn, R. C., Farrell, A.K., Fliginger, J., Heise, J.A., Klimek, D., Rowland-Schaefer, E., Small, L., Steijn, N., Swingley, W.D., and Barber, N.A.", t:"Multiple dimensions of plant diversity predict microbial community composition in grassland soils", j:"Ecosphere", v:"17, e70564", tags:["grass","q1"], site:"nachusa"},
+  {y:"2025", a:"Blackburn, R. C., Allington, G., Motzer, N., Munson, S.M., and Huang, Q.", t:"UAV-derived models of vegetation characteristics do not transfer to extreme drought and wet conditions across a Northern Arizona landscape", j:"Landscape Ecology", v:"40, 59", tags:["grass","q2","first"], site:"southwest"},
+  {y:"2025", a:"Atkins, D.H., Blackburn, R. C., Laughlin, D.C., Moore, M.M., and Sánchez Meador, A. J.", t:"Handheld lidar sensors can accurately measure aboveground biomass", j:"Ecosphere", v:"16(6), e70232", tags:["grass","methods"], site:"southwest"},
+  {y:"2021", a:"Donager, J. J., Sánchez Meador, A. J., and Blackburn, R. C.", t:"Adjudicating perspectives on forest structure: How do airborne, terrestrial, and mobile lidar-derived estimates compare?", j:"Remote Sensing", v:"13(12), 2297", tags:["forest","methods"], site:"southwest"},
+  {y:"2021", a:"Wails, C.N., Baker, K., Blackburn, R. C., Del Vallé, A., Heise, J., Herakovich, H., Holthuijzen, W.A., Nissenbaum, M.P., Rankin, L., Savage, K., Vanek, J.P., and Jones, H.P.", t:"Assessing changes to ecosystem structure and function following invasion by Spartina alterniflora and Phragmites australis: a meta-analysis", j:"Biological Invasions", v:"23, 2695–2709", tags:["synth"]},
+  {y:"2021", a:"Blackburn, R. C., Buscaglia, R., and Sánchez Meador, A. J.", t:"Mixtures of airborne lidar-based approaches improve predictions of forest structure", j:"Canadian Journal of Forest Research", v:"51(8), 1106–1116", tags:["forest","q2","methods","first"], site:"southwest"},
+  {y:"2021", a:"Guiden, P.W., Barber, N.A., Blackburn, R. C., Farrell, A., Fliginger, J., Hosler, S.C., King, R.B., Nelson, M., Rowland, E.G., Savage, K., Vanek, J.P., and Jones, H.P.", t:"Effects of management outweigh effects of plant diversity on restored animal communities in tallgrass prairies", j:"Proceedings of the National Academy of Sciences", v:"118(5), e2015421118", tags:["grass","q1"], site:"nachusa"},
+  {y:"2021", a:"Blackburn, R. C., Barber, N. A., Farrell, A.K., Buscaglia, R., and Jones, H. P.", t:"Monitoring ecological characteristics of a tallgrass prairie using an unmanned aerial vehicle", j:"Restoration Ecology", v:"29(S1), e13339", tags:["grass","q2","first"], site:"nachusa"},
+  {y:"2021", a:"Blackburn, R. C., Barber, N. A., and Jones, H. P.", t:"Reintroduced bison diet changes throughout the season in restored prairie", j:"Restoration Ecology", v:"29(1), e13161", tags:["grass","q1","first"], site:"nachusa"},
+  {y:"2020", a:"Blackburn, R. C., Barber, N. A., and Jones, H. P.", t:"Plant community shifts in response to fire and bison in a restored tallgrass prairie", j:"Natural Areas Journal", v:"40(3), 218–227", tags:["grass","q1","first"], site:"nachusa"},
+  {y:"2019", a:"Jones, H.P., Jones, P.C., Barbier, E.B., Blackburn, R. C., Rey Benayas, J.M., Holl, K.D., McCrackin, M., Meli, P., Montoya, D., and Moreno Mateos, D.", t:"We agree with Larkin et al. 2019: restoration is context specific", j:"Proceedings of the Royal Society B", v:"286(1907), 20191179", tags:["synth"]},
+  {y:"2019", a:"Barber, N. A., Farrell, A. K., Blackburn, R. C., Bauer, J. T., Groves, A. M., Brudvig, L. A., and Jones, H. P.", t:"Grassland restoration characteristics influence phylogenetic and taxonomic structure of plant communities and suggest assembly mechanisms", j:"Journal of Ecology", v:"107(5), 2105–2120", tags:["grass","q1"], site:"nachusa"},
+  {y:"2018", a:"Jones, H.P., Jones, P.C., Barbier, E.B., Blackburn, R. C., Rey Benayas, J.M., Holl, K.D., McCrackin, M., Meli, P., Montoya, D., and Moreno Mateos, D.", t:"Restoration and repair of Earth's damaged ecosystems", j:"Proceedings of the Royal Society B", v:"285(1873), 20172577", tags:["synth"]}
+];
 
-// add bootstrap table styles to pandoc tables
-function bootstrapStylePandocTables() {
-  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+/* Mentee descriptions are drafts from project titles; replace with your own. */
+const MENTEES = [
+  {group:"Smithsonian Conservation Biology Institute research interns", people:[
+    {name:"Cally Erickson", role:"Research intern", years:"2026–present", now:true,
+     text:"Building a three-step error propagation for iPhone lidar biomass estimates across the Mongolian steppe, tracking how uncertainty grows from plot to landscape.", out:"", photo:""},
+    {name:"Gabe Machado", role:"Research intern", years:"2026–present", now:true,
+     text:"Testing how well handheld lidar biomass estimation applies across different ecosystems.", out:"", photo:""},
+    {name:"Rachel Brubaker", role:"Research intern", years:"2024–2025", now:false,
+     text:"Developed a two-step multiscale approach for estimating vegetation cover in central Mongolia using Planet SkySat and Sentinel-2 imagery.", out:"Book chapter, in press", photo:""},
+    {name:"Anudari Bayarkhangai", role:"Research intern", years:"2023–2025", now:false,
+     text:"Compared categorical and continuous drone models for scaling satellite-based vegetation cover estimates in Mongolian grasslands.", out:"Remote Sensing of Environment, in review", photo:""},
+    {name:"Sarah Stockman", role:"Research intern", years:"2023", now:false,
+     text:"Processed drone imagery and mapped the distribution of bamboo in China.", out:"", photo:""}
+  ]},
+  {group:"Graduate students", people:[
+    {name:"Keegan Line", role:"Ph.D. committee member · Northern Arizona University", years:"2024–present", now:true,
+     text:"Expanding lidar-driven artificial intelligence to detect tree species in forests of the southwestern U.S.", out:"", photo:""}
+  ]}
+];
+
+/* ---------- HELPERS ---------- */
+const $ = s=>document.querySelector(s);
+const esc = s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const qChip = n=>`<span class="chip q${n}">Q${n} · ${n===1?"Disturbance & communities":"Model transferability"}</span>`;
+const photoHTML = (src,cap)=> src
+  ? `<figure class="photo"><img src="${esc(src)}" alt="${esc(cap)}" loading="lazy"><figcaption>${esc(cap)}</figcaption></figure>`
+  : `<figure class="photo"><div class="frame">Photo coming soon<br>${esc(cap)}</div></figure>`;
+
+/* ---------- PUBLICATIONS ---------- */
+const FILTERS=[["all","All"],["grass","Grasslands"],["forest","Forests"],["first","First author"],["q1","Disturbance & communities"],["q2","Model transferability"],["methods","Remote sensing methods"],["mentee","With mentees"],["synth","Synthesis"]];
+let pubFilter="all";
+$("#pubFilters").innerHTML=FILTERS.map(([k,l])=>`<button type="button" data-f="${k}" aria-pressed="${k==="all"}">${l}</button>`).join("");
+$("#pubFilters").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;pubFilter=b.dataset.f;
+  document.querySelectorAll("#pubFilters button").forEach(x=>x.setAttribute("aria-pressed",x===b));renderPubs();});
+$("#pubSearch").addEventListener("input",renderPubs);
+function renderPubs(){
+  const q=$("#pubSearch").value.trim().toLowerCase();
+  const list=PUBS.filter(p=>(pubFilter==="all"||p.tags.includes(pubFilter)) && (!q||(p.t+p.j+p.a).toLowerCase().includes(q)));
+  const years=[...new Set(list.map(p=>p.y))];
+  const pub=PUBS.filter(p=>/^\d/.test(p.y)).length;
+  $("#pubCount").textContent=`${list.length} shown · ${pub} published`;
+  $("#pubList").innerHTML = years.length? years.map(y=>`<div class="pubgroup"><h3>${y}</h3><ol>${list.filter(p=>p.y===y).map(p=>{
+    const tags=p.tags.filter(t=>t==="q1"||t==="q2").map(t=>qChip(+t[1])).join("")+(p.tags.includes("grass")?`<a class="chip sys" href="#research-grass">Grasslands</a>`:p.tags.includes("forest")?`<a class="chip sys" href="#research-forest">Forests</a>`:"");
+    const url="https://scholar.google.com/scholar?q="+encodeURIComponent('"'+p.t+'"');
+    return `<li class="pub"><a class="t" href="${url}" target="_blank" rel="noopener">${esc(p.t)}</a>
+      <span class="a">${esc(p.a).replace(esc(ME),"<strong>"+esc(ME)+"</strong>")}</span>
+      <span class="j"><em>${esc(p.j)}</em>${p.v?", "+esc(p.v):""}</span>${tags?`<span class="tags">${tags}</span>`:""}</li>`;}).join("")}</ol></div>`).join("")
+    : `<p style="color:var(--muted)">No publications match. Clear the search or pick another filter.</p>`;
 }
-$(document).ready(function () {
-  bootstrapStylePandocTables();
+renderPubs();
+
+/* ---------- MENTEES ---------- */
+const initials=n=>n.split(/\s+/).map(w=>w[0]).slice(0,2).join("");
+$("#menteeList").innerHTML=MENTEES.map(g=>`<div class="mgroup"><div class="sitehead" style="grid-template-columns:1fr"><h2 style="font-size:26px">${esc(g.group)}</h2></div>
+  <div class="mgrid">${g.people.map(m=>`<article class="mentee"><div class="avatar">${m.photo?`<img src="${esc(m.photo)}" alt="${esc(m.name)}">`:initials(m.name)}</div>
+    <div class="info"><span class="status ${m.now?"now":"past"}">${m.now?"Current":"Alum"} · ${esc(m.years)}</span><h3>${esc(m.name)}</h3><span class="role mono">${esc(m.role)}</span>
+    <p>${esc(m.text)}</p>${m.out?`<span class="out">Output: <em>${esc(m.out)}</em></span>`:""}</div></article>`).join("")}</div></div>`).join("")
+  + `<div class="mgroup"><div class="sitehead" style="grid-template-columns:1fr"><h2 style="font-size:26px">Cornell University</h2><p>I currently mentor three graduate students and three undergraduates working on forest structure and pollinators in New York and northern India.</p></div></div>`;
+
+/* ---------- ROUTING ---------- */
+function setPubFilter(f){pubFilter=f;document.querySelectorAll("#pubFilters button").forEach(x=>x.setAttribute("aria-pressed",x.dataset.f===f));renderPubs();}
+function route(){
+  const h=(location.hash||"#home").slice(1);
+  let page=h.startsWith("research")?"research":h.startsWith("pubs")?"publications":(["home","publications","mentees"].includes(h)?h:"home");
+  document.querySelectorAll("section.page").forEach(s=>s.hidden=s.dataset.page!==page);
+  document.querySelectorAll("nav a").forEach(a=>a.dataset.page===page?a.setAttribute("aria-current","page"):a.removeAttribute("aria-current"));
+  if(h==="pubs-grass")setPubFilter("grass"); else if(h==="pubs-forest")setPubFilter("forest");
+  if(h==="research-grass"||h==="research-forest")requestAnimationFrame(()=>document.getElementById(h).scrollIntoView({block:"start"}));
+  else window.scrollTo(0,0);
+}
+addEventListener("hashchange",route); route();
+
+$("#copyEmail").addEventListener("click",e=>{const b=e.currentTarget;
+  navigator.clipboard.writeText("rcblackburn@cornell.edu").then(()=>{b.textContent="Copied";setTimeout(()=>b.textContent="Copy",1500)})
+  .catch(()=>{const r=document.createRange();r.selectNodeContents(b.parentNode.firstChild);const s=getSelection();s.removeAllRanges();s.addRange(r);});});
+
+/* ---------- HOVER-TO-PLAY for every video.hoverplay (tap toggles on touch screens) ---------- */
+document.querySelectorAll("video.hoverplay").forEach(v=>{
+  const box=v.parentElement; v.pause();
+  const play=()=>{v.play().then(()=>box.classList.add("playing")).catch(()=>{});};
+  const stop=()=>{v.pause();box.classList.remove("playing");};
+  box.addEventListener("mouseenter",play); box.addEventListener("mouseleave",stop);
+  box.addEventListener("click",()=>{v.paused?play():stop();});
 });
-
-
-</script>
-
-<!-- tabsets -->
-
-<script>
-$(document).ready(function () {
-  window.buildTabsets("TOC");
-});
-
-$(document).ready(function () {
-  $('.tabset-dropdown > .nav-tabs > li').click(function () {
-    $(this).parent().toggleClass('nav-tabs-open')
-  });
-});
-</script>
-
-<!-- code folding -->
-
-
-<!-- dynamically load mathjax for compatibility with self-contained -->
-<script>
-  (function () {
-    var script = document.createElement("script");
-    script.type = "text/javascript";
-    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
-    document.getElementsByTagName("head")[0].appendChild(script);
-  })();
 </script>
 
 </body>
